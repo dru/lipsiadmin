@@ -5,18 +5,18 @@ var items = [
 	<%= model_instance.class.content_columns.collect{ |column| "{ name: '#{column.name}' }" }.join(",\n") %>
 ]
 
-var js = new Ext.data.JsonStore({
-	url: '/admin/<%= plural_name %>.json',                                       
-	root: '<%= plural_name %>',
-	id: 'id',                                            
-	fields: items
-});
-
 var ds = new Ext.data.Store({
-	proxy: proxy,
-	reader: js.reader,
+	proxy: new Ext.data.HttpProxy({url: '/admin/<%= plural_name %>.json', method: 'GET'}),
+	reader: new Ext.data.JsonReader({
+        root: '<%= plural_name %>',
+        totalProperty: 'total',
+        id: 'id'
+    },items),
+    // turn on remote sorting
 	remoteSort: true
 });
+
+
 	
 //Uncomment this whit your default sort
 //ds.setDefaultSort('created_at', 'desc');
@@ -132,12 +132,10 @@ function remove(){
 }
 
 function loadData(){ 
-	proxy.reload(js.reader.jsonData);
-	ds.load();
 	Lipsiadmin.app.unmask();
 }
 
-js.on('load', loadData);
+ds.on('load', loadData);
 Lipsiadmin.app.addItem(grid);
 Lipsiadmin.app.mask();
-js.load();
+ds.load();

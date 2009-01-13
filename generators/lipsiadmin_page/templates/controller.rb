@@ -10,8 +10,9 @@ class Backend::<%= controller_class_name %>Controller < BackendController
       format.html { render_javascript(formatted_backend_<%= controller_underscore_name %>_path(:js)) }
       format.js 
       format.json do
-        <%= plural_name %> = <%= model_name %>.find(:all)
-        return_data = Hash.new()      
+        <%= plural_name %> = <%= model_name %>.find(:all, :limit => 50, :offset => params[:start])
+        return_data = {}
+        return_data[:total] = <%= model_name %>.count
         return_data[:<%= plural_name %>] = <%= plural_name %>.collect{|u| { :id => u.id, <%= model_instance.class.content_columns.collect{ |column| "
                                                         :#{column.name} => u.#{column.name}" }.join(",") %> } } 
         render :json => return_data
