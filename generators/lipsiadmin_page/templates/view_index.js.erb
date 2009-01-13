@@ -1,5 +1,4 @@
 var selections = new Ext.grid.CheckboxSelectionModel();
-var proxy = new Ext.ux.data.PagingMemoryProxy();
 
 var items = [
 	<%= model_instance.class.content_columns.collect{ |column| "{ name: '#{column.name}' }" }.join(",\n") %>
